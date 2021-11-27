@@ -98,7 +98,7 @@ public:
 	//other
 	void die() {
 		if (m_hp <= 0) {
-			obj.setTextureRect(sf::IntRect(4 * spriteSize, 0, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(4 * spriteSize, spriteSize, spriteSize, spriteSize));
 			m_hp = 0;
 		}
 	}
@@ -148,7 +148,7 @@ class Skeleton : public Enemy {
 public:
 	/////////////////dmg/hp//
 	Skeleton() :Enemy(1, 10, ID_SKELETON){
-		obj.setTextureRect(sf::IntRect(3 * spriteSize, spriteSize, spriteSize, spriteSize));
+		obj.setTextureRect(sf::IntRect(0, 2 * spriteSize, spriteSize, spriteSize));
 	}
 	Skeleton(const Skeleton &another):Enemy(another.m_dmg, another.m_hp, ID_SKELETON) {
 		
