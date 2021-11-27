@@ -37,6 +37,7 @@ struct Map {
 		music.openFromFile("sounds/music.wav");
 		music.setVolume(60);
 		music.play();
+		music.setLoop(true);
 
 		hero = Player(endSizeMap.y, endSizeMap.x);
 		texture.loadFromFile("sprites/tileset.png");
