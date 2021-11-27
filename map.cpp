@@ -96,6 +96,11 @@ void Map::print() {
 					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(green);
 					else color(l_green);
 					break;
+
+				case '_':
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(purple);
+					else color(l_red);
+					break;
 			}
 
 			std::cout << field[i][j];
@@ -157,8 +162,18 @@ void Map::generate() {
 
 	//10% шанса появления скелета
 	if (chance(10)) {
-		Skeleton skeleton;
+		Skeleton* skeleton = new Skeleton;
 		enemy.push_back(skeleton);
+		return;
+	}
+
+	//7% шанса появления вылезающих шипов
+	if (chance(7)) {
+		field[startSizeMap.x][0] = '_';
+		field[startSizeMap.x][1] = '_';
+		field[startSizeMap.x][2] = '_';
+		MovingSpikes* spikes = new MovingSpikes;
+		enemy.push_back(spikes);
 		return;
 	}
 
@@ -233,7 +248,7 @@ void Map::update(int move) {
 			break;
 
 		case '^':
-			hero.hit(3);
+			hero.hit(1);
 			field[hero.getCord().y][hero.getCord().x] = 'v';
 
 			buffer.loadFromFile("sounds/hit.wav");
@@ -259,18 +274,20 @@ void Map::update(int move) {
 
 	//поведение врагов
 	if (enemy.size() > 0) {
-		std::list <Enemy>::iterator it = enemy.begin();
+		std::list <Enemy*>::iterator it = enemy.begin();
 		for (it; it != enemy.end(); it++) {
-			if ((*it).getID() == ID_SKELETON) {
-				if ((*it).getCord().x + (*it).getDir() < 0 or (*it).getCord().x + (*it).getDir() > 2) {
-					(*it).changeDir();
+			if ((*it)->getID() == ID_SKELETON or (*it)->getID() == ID_SPIKES) {
+				if ((*it)->getCord().x + (*it)->getDir() < 0 or (*it)->getCord().x + (*it)->getDir() > 2) {
+					(*it)->changeDir();
 				}
-				(*it).plusCord();
+				if ((*it)->getCord().x + 2 * (*it)->getDir() < 0 or (*it)->getCord().x + 2 * (*it)->getDir() > 2)
+						(*it)->changeSpriteDir();
+				(*it)->plusDir();
 			}
 
 			//если игрок на клетке с врагом
-			if ((*it).getCord() == hero.getCord()) {
-				hero.hit((*it).getDMG());
+			if ((*it)->getCord() == hero.getCord()) {
+				hero.hit((*it)->getDMG());
 
 				if (!hero.isAlive()) {
 					buffer.loadFromFile("sounds/death.wav");
@@ -285,7 +302,7 @@ void Map::update(int move) {
 			}
 		}
 		it = enemy.begin();
-		if ((*it).getCord().y > endSizeMap.x - 1)
+		if ((*it)->getCord().y > endSizeMap.x - 1)
 			enemy.pop_front();
 	}
 	count_f = 1;
@@ -328,6 +345,10 @@ void Map::show(sf::RenderWindow& window) {
 				case 'a':
 					obj.setTextureRect(sf::IntRect(7 * spriteSize, 0, spriteSize, spriteSize));
 					break;
+
+				case '_':
+					obj.setTextureRect(sf::IntRect(8 * spriteSize, 0, spriteSize, spriteSize));
+					break;
 			}
 
 			obj.setScale(scale, scale);
@@ -340,16 +361,14 @@ void Map::show(sf::RenderWindow& window) {
 	//отрисовка врагов:
 	
 	if (enemy.size() > 0) {
-		for (std::list <Enemy>::iterator it = enemy.begin(); it != enemy.end(); it++) {
-			if ((*it).getID() == ID_SKELETON) {
-				(*it).obj.setScale(scale, scale);
-				(*it).obj.setTexture(texture);
-				sf::Vector2f start_place(((*it).getCord().x - (*it).getDir()) * spriteSize * scale, ((*it).getCord().y-2) * spriteSize * scale);
-				sf::Vector2f offset(((*it).getDir())* spriteSize * scale / 60.0 * count_f, spriteSize * scale / 60.0 * count_f);
+		for (std::list <Enemy*>::iterator it = enemy.begin(); it != enemy.end(); it++) {
+				(*it)->obj.setScale(scale, scale);
+				(*it)->obj.setTexture(texture);
+				sf::Vector2f start_place(((*it)->getCord().x - (*it)->getDir()) * spriteSize * scale, ((*it)->getCord().y-2) * spriteSize * scale);
+				sf::Vector2f offset(((*it)->getDir())* spriteSize * scale / 60.0 * count_f, spriteSize * scale / 60.0 * count_f);
 	
-				(*it).obj.setPosition(start_place + offset);
-				window.draw((*it).obj);
-			}
+				(*it)->obj.setPosition(start_place + offset);
+				window.draw((*it)->obj);
 		}
 	}
 	

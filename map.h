@@ -23,17 +23,20 @@ struct Map {
 	static short count_f;
 
 	char field[7][3];
+
 	sf::Texture texture;
 	sf::Sprite obj;
+
 	sf::SoundBuffer buffer;
 	sf::Sound sound;
+
 	sf::Music music;
 
 	int spriteSize = 20;
 	int scale;
 	Player hero;
 
-	std::list <Enemy> enemy;
+	std::list <Enemy*> enemy;
 
 	Map(int scaleValue) : scale(scaleValue), stepCount(0) {
 
@@ -41,6 +44,7 @@ struct Map {
 		music.setVolume(60);
 		music.play();
 		music.setLoop(true);
+
 		count_f = 1;
 		hero = Player(endSizeMap.y, endSizeMap.x);
 		texture.loadFromFile("sprites/tileset.png");
