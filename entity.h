@@ -66,10 +66,11 @@ public:
 class Player : public Entity{
 private:
 	int money;
+	bool dash;
 public:
 	Player() {}
 
-	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3, 10, 1) , money(0) {
+	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3, 10, 1) , money(0), dash(false) {
 		obj.setTextureRect(sf::IntRect(0, spriteSize, spriteSize, spriteSize));
 		m_id = ID_PLAYER;
 	}
@@ -77,6 +78,14 @@ public:
 	//get
 	int getMoney() {
 		return money;
+	}
+
+	void dashHero() {
+		dash =  (dash == false) ? true : false;
+	}
+		
+	bool getDash() {
+		return dash;
 	}
 	
 	void operator =(int value) {
@@ -131,14 +140,19 @@ public:
 	}
 
 	//get
-	int getDir() {
-		return m_dir.x;
+	sf::Vector2i getDir() {
+		return m_dir;
 	}
 
 	//plus or minus
-	void plusCord() {
+	void plusDir() {
 		m_cord += m_dir;
 	}
+
+	void plusCord(sf::Vector2i& a) {
+		m_cord += a;
+	}
+
 	void minusCord() {
 		m_cord -= m_dir;
 	}
@@ -146,6 +160,10 @@ public:
 	//other
 	void changeDir() {
 		m_dir.x *= -1;
+	}
+
+	void changeDiry(int value) {
+		m_dir.y += value;
 	}
 };
 

@@ -12,7 +12,8 @@
 enum Direction {
 	DIR_LEFT,
 	DIR_UP,
-	DIR_RIGHT
+	DIR_RIGHT,
+	DIR_DASH
 };
 
 struct Map {
@@ -42,6 +43,7 @@ struct Map {
 		music.play();
 		music.setLoop(true);
 		count_f = 1;
+		stepCount = 0;
 		hero = Player(endSizeMap.y, endSizeMap.x);
 		texture.loadFromFile("sprites/tileset.png");
 
@@ -53,6 +55,7 @@ struct Map {
 	void update(int move);
 	void create();
 	void restart();
+	void mapMove();
 
 	//Вывод карты
 	void print();

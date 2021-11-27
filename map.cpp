@@ -121,6 +121,8 @@ void Map::print() {
 		std::cout << "-----------\n\n";
 		color(white);
 	}
+
+	std::cout << hero.getDash() << "\n";
 }
 
 void Map::generate() {
@@ -178,8 +180,7 @@ void Map::generate() {
 	return;
 }
 
-void Map::update(int move) {
-	// Движение карты
+void Map::mapMove() {
 	for (int i = endSizeMap.x - 1; i >= startSizeMap.x; i--) {
 		for (int j = endSizeMap.y - 1; j >= startSizeMap.y; j--) {
 			if (i == endSizeMap.x - 1) {
@@ -187,11 +188,16 @@ void Map::update(int move) {
 			}
 
 			else {
-				field[i+1][j] = field[i][j];
+				field[i + 1][j] = field[i][j];
 				field[i][j] = '#';
 			}
 		}
 	}
+}
+
+void Map::update(int move) {
+	// Движение карты
+	mapMove();
 
 	generate();
 
@@ -214,8 +220,15 @@ void Map::update(int move) {
 				hero = 0;
 			}
 			break;
+
 		case DIR_UP:
 			hero = 0;
+			break;
+
+		case DIR_DASH:
+			hero = 0;
+			mapMove();
+			hero.dashHero();
 	}
 
 	hero.setCord(temp);
@@ -262,10 +275,11 @@ void Map::update(int move) {
 		std::list <Enemy>::iterator it = enemy.begin();
 		for (it; it != enemy.end(); it++) {
 			if ((*it).getID() == ID_SKELETON) {
-				if ((*it).getCord().x + (*it).getDir() < 0 or (*it).getCord().x + (*it).getDir() > 2) {
+				if ((*it).getCord().x + (*it).getDir().x < 0 or (*it).getCord().x + (*it).getDir().x > 2) {
 					(*it).changeDir();
 				}
-				(*it).plusCord();
+				(*it).plusDir();
+
 			}
 
 			//если игрок на клетке с врагом
@@ -288,6 +302,7 @@ void Map::update(int move) {
 		if ((*it).getCord().y > endSizeMap.x - 1)
 			enemy.pop_front();
 	}
+
 	count_f = 1;
 	stepCount++;
 }
@@ -344,11 +359,12 @@ void Map::show(sf::RenderWindow& window) {
 			if ((*it).getID() == ID_SKELETON) {
 				(*it).obj.setScale(scale, scale);
 				(*it).obj.setTexture(texture);
-				sf::Vector2f start_place(((*it).getCord().x - (*it).getDir()) * spriteSize * scale, ((*it).getCord().y-2) * spriteSize * scale);
-				sf::Vector2f offset(((*it).getDir())* spriteSize * scale / 60.0 * count_f, spriteSize * scale / 60.0 * count_f);
-	
+				sf::Vector2f start_place(((*it).getCord().x - (*it).getDir().x) * spriteSize * scale, ((*it).getCord().y-2) * spriteSize * scale);
+				sf::Vector2f offset(((*it).getDir().x)* spriteSize * scale / 60.0 * count_f, (*it).getDir().y * spriteSize * scale / 60.0 * count_f);
+
 				(*it).obj.setPosition(start_place + offset);
 				window.draw((*it).obj);
+				
 			}
 		}
 	}
