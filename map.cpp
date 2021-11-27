@@ -91,6 +91,11 @@ void Map::print() {
 					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(purple);
 					else color(l_red);
 					break;
+				
+				case 'a':
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(green);
+					else color(l_green);
+					break;
 			}
 
 			std::cout << field[i][j];
@@ -157,9 +162,15 @@ void Map::generate() {
 		return;
 	}
 
-	//5% шанса появление монет
+	//5% шанса появления монет
 	if (chance(5)) {
 		field[startSizeMap.x][randomTile] = 'm';
+		return;
+	}
+
+	//2% шанса появления яблока
+	if (chance(2)) {
+		field[startSizeMap.x][randomTile] = 'a';
 		return;
 	}
 
@@ -236,6 +247,14 @@ void Map::update(int move) {
 			}
 
 			break;
+
+		case 'a':
+			hero.heal(2);
+			field[hero.getCord().y][hero.getCord().x] = '#';
+
+			buffer.loadFromFile("sounds/eat.wav");
+			sound.setBuffer(buffer);
+			sound.play();
 	}
 
 	//поведение врагов
@@ -305,9 +324,12 @@ void Map::show(sf::RenderWindow& window) {
 				case 'v':
 					obj.setTextureRect(sf::IntRect(6 * spriteSize, 0, spriteSize, spriteSize));
 					break;
+
+				case 'a':
+					obj.setTextureRect(sf::IntRect(7 * spriteSize, 0, spriteSize, spriteSize));
+					break;
 			}
 
-			
 			obj.setScale(scale, scale);
 			sf::Vector2f start_place((j)*spriteSize * scale, (i-2) * spriteSize * scale);
 			sf::Vector2f offset(0, (stepCount > 0) * spriteSize * scale / 60.0 * count_f);

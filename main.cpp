@@ -67,6 +67,7 @@ int main() {
         }
         if (map.count_f == 61 and time > 500000 and map.hero.isAlive()) {
             map.update(DIR_UP);
+            map.print();
             map.count_f = 1;
         }
     }

@@ -13,6 +13,7 @@ class Entity {
 protected:
 	int m_id;
 	int m_hp;
+	int m_maxhp;
 	int m_dmg;
 	sf::Vector2i m_dir;
 	int spriteSize = 20;
@@ -24,7 +25,7 @@ public:
 
 	Entity() {}
 
-	Entity(int x, int y, int hp, int dmg) : m_cord(x, y), m_hp(hp), m_dmg(dmg) {}
+	Entity(int x, int y, int hp, int dmg) : m_cord(x, y), m_hp(hp), m_maxhp(hp), m_dmg(dmg) {}
 
 	Entity(sf::Vector2i cord, int hp, int dmg) : m_cord(cord), m_hp(hp), m_dmg(dmg) {}
 
@@ -93,6 +94,10 @@ public:
 	//plus or minus
 	void addMoney(int value) {
 		money += value;
+	}
+	void heal(int value) {
+		m_hp += value;
+		if (m_hp > m_maxhp) m_hp = m_maxhp;
 	}
 
 	//other
