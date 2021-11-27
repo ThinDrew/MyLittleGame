@@ -260,27 +260,27 @@ void Map::show(sf::RenderWindow& window) {
 					break;
 
 				case '%':
-					obj.setTextureRect(sf::IntRect(spriteSize, spriteSize, spriteSize, spriteSize));
+					obj.setTextureRect(sf::IntRect(spriteSize, 0, spriteSize, spriteSize));
 					break;
 
 				case 'o':
-					obj.setTextureRect(sf::IntRect(0, spriteSize, spriteSize, spriteSize));
-					break;
-
-				case 'O':
-					obj.setTextureRect(sf::IntRect(2 * spriteSize, spriteSize, spriteSize, spriteSize));
-					break;
-
-				case 'm':
 					obj.setTextureRect(sf::IntRect(2 * spriteSize, 0, spriteSize, spriteSize));
 					break;
 
-				case '^':
+				case 'O':
 					obj.setTextureRect(sf::IntRect(3 * spriteSize, 0, spriteSize, spriteSize));
 					break;
 
+				case 'm':
+					obj.setTextureRect(sf::IntRect(4 * spriteSize, 0, spriteSize, spriteSize));
+					break;
+
+				case '^':
+					obj.setTextureRect(sf::IntRect(5 * spriteSize, 0, spriteSize, spriteSize));
+					break;
+
 				case 'v':
-					obj.setTextureRect(sf::IntRect(4 * spriteSize, spriteSize, spriteSize, spriteSize));
+					obj.setTextureRect(sf::IntRect(6 * spriteSize, 0, spriteSize, spriteSize));
 					break;
 			}
 
