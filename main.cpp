@@ -34,6 +34,9 @@ int main() {
                 if (event.key.code == sf::Keyboard::Right) {
                     map.update(DIR_RIGHT);
                 }
+                if (event.key.code == sf::Keyboard::Space) {
+                    map.update(DIR_DASH);
+                }
                 map.print();
             }
 
