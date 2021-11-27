@@ -10,12 +10,6 @@ int main() {
     int scale = 5; //во сколько раз увеличиваются пиксели
 
     sf::Clock clock;
-    //double t(0.0);
-    //double dt = 1 / 60.0;
-    //double currentTime = clock.getElapsedTime().asMilliseconds();
-    //double newTime = clock.getElapsedTime().asMilliseconds();
-    //double frameTime = newTime - currentTime;
-    //currentTime = newTime;
     Map map(scale);
     map.print();
 

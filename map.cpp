@@ -6,8 +6,13 @@
 #include "map.h"
 #include "help.h"
 
-//#, %, o, O - тайлы пола, которые ни на что не влияют
+// Спрайты пола:
 // # - обычный пол
+// % - трещины в полу
+// о - камушки
+// О - череп
+
+// Другие спрайты:
 //^ - шипы
 //v - окрававленные шипы
 //m - монеты
@@ -304,9 +309,6 @@ void Map::show(sf::RenderWindow& window) {
 
 			
 			obj.setScale(scale, scale);
-			//i-1 потому что сдвигаем от глаз ненужную строчку
-			// sf::Vector2f start_place((j)*spriteSize * scale, (i - 1) * spriteSize * scale);
-			//sf::Vector2f offset(((j + 1) * spriteSize * scale) / 60.0 * count_f, ((i)*spriteSize * scale) / 60.0 * count_f);
 			sf::Vector2f start_place((j)*spriteSize * scale, (i-2) * spriteSize * scale);
 			sf::Vector2f offset(0, (stepCount > 0) * spriteSize * scale / 60.0 * count_f);
 			obj.setPosition(start_place + offset);

@@ -69,7 +69,7 @@ public:
 	Player() {}
 
 	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3, 10, 1) , money(0) {
-		obj.setTextureRect(sf::IntRect(1 * spriteSize, 0, spriteSize, spriteSize));
+		obj.setTextureRect(sf::IntRect(0, spriteSize, spriteSize, spriteSize));
 		m_id = ID_PLAYER;
 	}
 
