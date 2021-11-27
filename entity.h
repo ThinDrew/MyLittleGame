@@ -14,7 +14,7 @@ protected:
 	int m_id;
 	int m_hp;
 	int m_dmg;
-
+	sf::Vector2i m_dir;
 	int spriteSize = 20;
 
 	sf::Vector2i m_cord;
@@ -68,7 +68,7 @@ private:
 public:
 	Player() {}
 
-	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 2, 10, 1) , money(0) {
+	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3, 10, 1) , money(0) {
 		obj.setTextureRect(sf::IntRect(1 * spriteSize, 0, spriteSize, spriteSize));
 		m_id = ID_PLAYER;
 	}
@@ -76,6 +76,14 @@ public:
 	//get
 	int getMoney() {
 		return money;
+	}
+	
+	void operator =(int value) {
+		m_dir.x = value;
+	}
+
+	int getDir() {
+		return m_dir.x;
 	}
 
 	bool isAlive() {
@@ -101,8 +109,6 @@ public:
 };
 
 class Enemy : public Entity {
-private:
-	sf::Vector2i m_dir;
 public:
 	Enemy (int damage, int health, int id): Entity(rand()% 3, -1, health, damage){
 		m_id = id;
@@ -127,6 +133,9 @@ public:
 	//plus or minus
 	void plusCord() {
 		m_cord += m_dir;
+	}
+	void minusCord() {
+		m_cord -= m_dir;
 	}
 
 	//other

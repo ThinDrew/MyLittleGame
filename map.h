@@ -17,8 +17,11 @@ enum Direction {
 
 struct Map {
 	const sf::Vector2i startSizeMap{ 0, 0 };
-	sf::Vector2i endSizeMap{ 7, 3 };
-	
+	sf::Vector2i endSizeMap{ 8, 3 };
+
+	unsigned int stepCount;
+	static short count_f;
+
 	char field[7][3];
 	sf::Texture texture;
 	sf::Sprite obj;
@@ -32,13 +35,13 @@ struct Map {
 
 	std::list <Enemy> enemy;
 
-	Map(int scaleValue) : scale(scaleValue) {
+	Map(int scaleValue) : scale(scaleValue), stepCount(0) {
 
 		music.openFromFile("sounds/music.wav");
 		music.setVolume(60);
 		music.play();
 		music.setLoop(true);
-
+		count_f = 1;
 		hero = Player(endSizeMap.y, endSizeMap.x);
 		texture.loadFromFile("sprites/tileset.png");
 
@@ -53,5 +56,6 @@ struct Map {
 
 	//Вывод карты
 	void print();
+
 	void show(sf::RenderWindow& window);
 };

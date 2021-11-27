@@ -11,6 +11,7 @@
 //^ - шипы
 //v - окрававленные шипы
 //m - монеты
+short Map::count_f = 1;
 
 void Map::create() {
 	for (int i = startSizeMap.x; i < endSizeMap.x; i++) {
@@ -44,6 +45,8 @@ void Map::restart() {
 	hero = Player(endSizeMap.y, endSizeMap.x);
 	texture.loadFromFile("sprites/tileset.png");
 
+	stepCount = 0;
+	count_f = 1;
 	sound.stop();
 	music.play();
 
@@ -55,32 +58,32 @@ void Map::print() {
 		for (int j = startSizeMap.y; j < endSizeMap.y; j++) {
 			switch (field[i][j]) {
 				case '#':
-					if (i == startSizeMap.x) color(l_blue);
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(l_blue);
 					else color(gray);
 					break;
 
 				case '%':
-					if (i == startSizeMap.x) color(l_blue);
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(l_blue);
 					else color(gray);
 					break;
 
 				case 'o':
-					if (i == startSizeMap.x) color(l_blue);
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(l_blue);
 					else color(gray);
 					break;
 
 				case 'O':
-					if (i == startSizeMap.x) color(l_blue);
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(l_blue);
 					else color(gray);
 					break;
 
 				case 'm':
-					if (i == startSizeMap.x) color(l_green);
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(l_green);
 					else color(yellow);
 					break;
 
 				case '^':
-					if (i == startSizeMap.x) color(purple);
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(purple);
 					else color(l_red);
 					break;
 			}
@@ -176,19 +179,32 @@ void Map::update(int move) {
 
 	generate();
 
+	//Движение игрока
 	sf::Vector2i temp = hero.getCord();
 	switch (move) {
 		case DIR_LEFT:
 			temp.x--;
-			if (temp.x < startSizeMap.y) temp.x = startSizeMap.y;
+			hero = -1;
+			if (temp.x < startSizeMap.y) {
+				temp.x = startSizeMap.y;
+				hero = 0;
+			}
 			break;
 		case DIR_RIGHT:
 			temp.x++;
-			if (temp.x > endSizeMap.y - 1) temp.x = endSizeMap.y - 1;
+			hero = 1;
+			if (temp.x > endSizeMap.y - 1) {
+				temp.x = endSizeMap.y - 1;
+				hero = 0;
+			}
 			break;
+		case DIR_UP:
+			hero = 0;
 	}
+
 	hero.setCord(temp);
 
+	//Взаимодействие с объектами
 	switch (field[hero.getCord().y][hero.getCord().x]) {
 		case 'm':
 			hero.addMoney(10);
@@ -248,10 +264,12 @@ void Map::update(int move) {
 		if ((*it).getCord().y > endSizeMap.x - 1)
 			enemy.pop_front();
 	}
+	count_f = 1;
+	stepCount++;
 }
 
 void Map::show(sf::RenderWindow& window) {
-	for (int i = startSizeMap.x; i < endSizeMap.x; i++) {
+	for (int i = startSizeMap.x ; i < endSizeMap.x; i++) {
 		for (int j = startSizeMap.y; j < endSizeMap.y; j++) {
 			obj.setTexture(texture);
 			switch (field[i][j]) {
@@ -284,9 +302,14 @@ void Map::show(sf::RenderWindow& window) {
 					break;
 			}
 
+			
 			obj.setScale(scale, scale);
 			//i-1 потому что сдвигаем от глаз ненужную строчку
-			obj.setPosition((j) * spriteSize * scale, (i-1) * spriteSize * scale);
+			// sf::Vector2f start_place((j)*spriteSize * scale, (i - 1) * spriteSize * scale);
+			//sf::Vector2f offset(((j + 1) * spriteSize * scale) / 60.0 * count_f, ((i)*spriteSize * scale) / 60.0 * count_f);
+			sf::Vector2f start_place((j)*spriteSize * scale, (i-2) * spriteSize * scale);
+			sf::Vector2f offset(0, (stepCount > 0) * spriteSize * scale / 60.0 * count_f);
+			obj.setPosition(start_place + offset);
 			window.draw(obj);
 		}
 	}
@@ -297,7 +320,10 @@ void Map::show(sf::RenderWindow& window) {
 			if ((*it).getID() == ID_SKELETON) {
 				(*it).obj.setScale(scale, scale);
 				(*it).obj.setTexture(texture);
-				(*it).obj.setPosition((*it).getCord().x * spriteSize * scale, ((*it).getCord().y - 1) * spriteSize * scale);
+				sf::Vector2f start_place(((*it).getCord().x - (*it).getDir()) * spriteSize * scale, ((*it).getCord().y-2) * spriteSize * scale);
+				sf::Vector2f offset(((*it).getDir())* spriteSize * scale / 60.0 * count_f, spriteSize * scale / 60.0 * count_f);
+	
+				(*it).obj.setPosition(start_place + offset);
 				window.draw((*it).obj);
 			}
 		}
@@ -309,6 +335,8 @@ void Map::show(sf::RenderWindow& window) {
 
 	hero.obj.setScale(scale, scale);
 	hero.obj.setTexture(texture);
-	hero.obj.setPosition(hero.getCord().x * spriteSize * scale, (hero.getCord().y - 1) * spriteSize * scale);
+	sf::Vector2f start_place((hero.getCord().x - hero.getDir())* spriteSize * scale, (hero.getCord().y-1) * spriteSize * scale);
+	sf::Vector2f offset((hero.getDir() * spriteSize * scale) / 60.0 * count_f, 0);
+	hero.obj.setPosition(start_place + offset);
 	window.draw(hero.obj);
 }
