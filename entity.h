@@ -169,14 +169,14 @@ public:
 class MovingSpikes : public Enemy {
 public:
 	MovingSpikes() : Enemy(2, 0, ID_SPIKES) {
-		if (getDir() < 0)
+		if (getDir().x < 0)
 			obj.setTextureRect(sf::IntRect(9 * spriteSize, 0, spriteSize, spriteSize));
 		else
 			obj.setTextureRect(sf::IntRect(10 * spriteSize, 0, spriteSize, spriteSize));
 	}
 
 	virtual void changeSpriteDir() {
-		if (getDir() > 0)
+		if (getDir().x > 0)
 			obj.setTextureRect(sf::IntRect(9 * spriteSize, 0, spriteSize, spriteSize));
 		else
 			obj.setTextureRect(sf::IntRect(10 * spriteSize, 0, spriteSize, spriteSize));
@@ -187,7 +187,7 @@ class Skeleton : public Enemy {
 public:
 	/////////////////dmg/hp//
 	Skeleton() :Enemy(1, 10, ID_SKELETON){
-		if (getDir() < 0)
+		if (getDir().x < 0)
 			obj.setTextureRect(sf::IntRect(5 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
 		else
 			obj.setTextureRect(sf::IntRect(6 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
@@ -198,7 +198,7 @@ public:
 
 	//other
 	virtual void changeSpriteDir() {
-		if (getDir() > 0)
+		if (getDir().x > 0)
 			obj.setTextureRect(sf::IntRect(5 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
 		else
 			obj.setTextureRect(sf::IntRect(6 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));

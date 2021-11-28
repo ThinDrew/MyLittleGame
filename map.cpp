@@ -59,6 +59,8 @@ void Map::restart() {
 }
 
 void Map::print() {
+	system("CLS");
+
 	for (int i = startSizeMap.x; i < endSizeMap.x; i++) {
 		for (int j = startSizeMap.y; j < endSizeMap.y; j++) {
 			switch (field[i][j]) {
@@ -127,7 +129,7 @@ void Map::print() {
 		color(white);
 	}
 
-	std::cout << hero.getDash() << "\n";
+	std::cout << "Dash: " << hero.getDash() << "\n";
 }
 
 void Map::generate() {
@@ -290,10 +292,10 @@ void Map::update(int move) {
 		std::list <Enemy*>::iterator it = enemy.begin();
 		for (it; it != enemy.end(); it++) {
 			if ((*it)->getID() == ID_SKELETON or (*it)->getID() == ID_SPIKES) {
-				if ((*it)->getCord().x + (*it)->getDir() < 0 or (*it)->getCord().x + (*it)->getDir() > 2) {
+				if ((*it)->getCord().x + (*it)->getDir().x < 0 or (*it)->getCord().x + (*it)->getDir().x > 2) {
 					(*it)->changeDir();
 				}
-				if ((*it)->getCord().x + 2 * (*it)->getDir() < 0 or (*it)->getCord().x + 2 * (*it)->getDir() > 2)
+				if ((*it)->getCord().x + 2 * (*it)->getDir().x < 0 or (*it)->getCord().x + 2 * (*it)->getDir().x > 2)
 						(*it)->changeSpriteDir();
 				(*it)->plusDir();
 			}
@@ -378,8 +380,8 @@ void Map::show(sf::RenderWindow& window) {
 		for (std::list <Enemy*>::iterator it = enemy.begin(); it != enemy.end(); it++) {
 				(*it)->obj.setScale(scale, scale);
 				(*it)->obj.setTexture(texture);
-				sf::Vector2f start_place(((*it)->getCord().x - (*it)->getDir()) * spriteSize * scale, ((*it)->getCord().y-2) * spriteSize * scale);
-				sf::Vector2f offset(((*it)->getDir())* spriteSize * scale / 60.0 * count_f, spriteSize * scale / 60.0 * count_f);
+				sf::Vector2f start_place(((*it)->getCord().x - (*it)->getDir().x) * spriteSize * scale, ((*it)->getCord().y-2) * spriteSize * scale);
+				sf::Vector2f offset(((*it)->getDir().x)* spriteSize * scale / 60.0 * count_f, spriteSize * scale / 60.0 * count_f);
 	
 				(*it)->obj.setPosition(start_place + offset);
 				window.draw((*it)->obj);
