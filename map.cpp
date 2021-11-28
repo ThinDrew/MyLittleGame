@@ -1,8 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 
 #include "entity.h"
+ 
 #include "map.h"
 #include "help.h"
 
@@ -212,11 +214,22 @@ void Map::mapMove() {
 	}
 }
 
+void Map::shiftEnemies(int value) {
+	if (enemy.size() > 0) {
+		std::list <Enemy*>::iterator it = enemy.begin();
+		for (it; it != enemy.end(); it++) {
+			(*it)->setDirY(value);
+		}
+	}
+}
+
 void Map::update(int move) {
 	// Движение карты
 	mapMove();
 
 	generate();
+
+	shiftEnemies(1);
 
 	//Движение игрока
 	sf::Vector2i temp = hero.getCord();
@@ -246,6 +259,7 @@ void Map::update(int move) {
 			hero = 0;
 			mapMove();
 			hero.dashHero();
+			shiftEnemies(2);
 	}
 
 	hero.setCord(temp);
@@ -394,6 +408,7 @@ void Map::show(sf::RenderWindow& window) {
 
 	hero.obj.setScale(scale, scale);
 	hero.obj.setTexture(texture);
+	
 	sf::Vector2f start_place((hero.getCord().x - hero.getDir())* spriteSize * scale, (hero.getCord().y-1) * spriteSize * scale);
 	sf::Vector2f offset((hero.getDir() * spriteSize * scale) / 60.0 * count_f, 0);
 	hero.obj.setPosition(start_place + offset);

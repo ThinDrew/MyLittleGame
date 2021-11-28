@@ -15,12 +15,11 @@ int main() {
     sf::Clock clock;
     Map map(scale);
     map.print();
-
+   
     sf::RenderWindow window(sf::VideoMode(300, 600), "CURS");
     
     while (window.isOpen()) {
         windowInFocus = window.hasFocus();
-
         float time = clock.getElapsedTime().asMicroseconds();
         sf::Event event;
         while (window.pollEvent(event)) {

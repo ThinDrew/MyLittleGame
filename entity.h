@@ -145,6 +145,11 @@ public:
 		return m_dir;
 	}
 
+	//set
+	void setDirY(int value) {
+		m_dir.y = value;
+	}
+
 	//plus or minus
 	void plusDir() {
 		m_cord += m_dir;
