@@ -193,8 +193,7 @@ void Map::generate() {
 	return;
 }
 
-void Map::update(int move) {
-	// Движение карты
+void Map::mapMove() {
 	for (int i = endSizeMap.x - 1; i >= startSizeMap.x; i--) {
 		for (int j = endSizeMap.y - 1; j >= startSizeMap.y; j--) {
 			if (i == endSizeMap.x - 1) {
@@ -202,11 +201,16 @@ void Map::update(int move) {
 			}
 
 			else {
-				field[i+1][j] = field[i][j];
+				field[i + 1][j] = field[i][j];
 				field[i][j] = '#';
 			}
 		}
 	}
+}
+
+void Map::update(int move) {
+	// Движение карты
+	mapMove();
 
 	generate();
 
@@ -231,6 +235,10 @@ void Map::update(int move) {
 			break;
 		case DIR_UP:
 			hero = 0;
+			break;
+		case DIR_DASH:
+			hero = 0;
+			mapMove();
 	}
 
 	hero.setCord(temp);
