@@ -170,16 +170,16 @@ class MovingSpikes : public Enemy {
 public:
 	MovingSpikes() : Enemy(2, 0, ID_SPIKES) {
 		if (getDir().x < 0)
-			obj.setTextureRect(sf::IntRect(9 * spriteSize, 0, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(0, 3 * spriteSize, spriteSize, spriteSize));
 		else
-			obj.setTextureRect(sf::IntRect(10 * spriteSize, 0, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(spriteSize, 3 * spriteSize, spriteSize, spriteSize));
 	}
 
 	virtual void changeSpriteDir() {
 		if (getDir().x > 0)
-			obj.setTextureRect(sf::IntRect(9 * spriteSize, 0, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(0, 3 * spriteSize, spriteSize, spriteSize));
 		else
-			obj.setTextureRect(sf::IntRect(10 * spriteSize, 0, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(spriteSize, 3 * spriteSize, spriteSize, spriteSize));
 	}
 };
 
