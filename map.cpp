@@ -126,6 +126,8 @@ void Map::print() {
 		std::cout << "-----------\n\n";
 		color(white);
 	}
+
+	std::cout << hero.getDash() << "\n";
 }
 
 void Map::generate() {
@@ -233,12 +235,15 @@ void Map::update(int move) {
 				hero = 0;
 			}
 			break;
+
 		case DIR_UP:
 			hero = 0;
 			break;
+
 		case DIR_DASH:
 			hero = 0;
 			mapMove();
+			hero.dashHero();
 	}
 
 	hero.setCord(temp);
@@ -313,6 +318,7 @@ void Map::update(int move) {
 		if ((*it)->getCord().y > endSizeMap.x - 1)
 			enemy.pop_front();
 	}
+
 	count_f = 1;
 	stepCount++;
 }
