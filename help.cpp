@@ -7,3 +7,7 @@ bool chance(int value) {
 	if (check > value) return false;
 	else return true;
 }
+
+int random(int a, int b) {
+	return (rand() % (b - a + 1)) + a;
+}
