@@ -157,25 +157,16 @@ void Map::generate() {
 			field[startSizeMap.x][randomTile] = 'O';
 		break;
 	}
-	
-	//40% шанса появления шипов
-	if (chance(400)) {
-		// 30% шанса появления вторых шипов (на той же линии)
-		if (chance(30)) {
-			field[startSizeMap.x][randomTile] = '^';
-			int randomTile = rand() % 3;
-			field[startSizeMap.x][randomTile] = '^';
-			return;
-		}
-		else
-			field[startSizeMap.x][randomTile] = '^';
+
+	//2% шанса появления яблока
+	if (chance(20)) {
+		field[startSizeMap.x][randomTile] = 'a';
 		return;
 	}
 
-	//10% шанса появления скелета
-	if (chance(100)) {
-		Skeleton* skeleton = new Skeleton;
-		enemy.push_back(skeleton);
+	//5% шанса появления монет
+	if (chance(50)) {
+		field[startSizeMap.x][randomTile] = 'm';
 		return;
 	}
 
@@ -189,15 +180,24 @@ void Map::generate() {
 		return;
 	}
 
-	//5% шанса появления монет
-	if (chance(50)) {
-		field[startSizeMap.x][randomTile] = 'm';
+	//10% шанса появления скелета
+	if (chance(100)) {
+		Skeleton* skeleton = new Skeleton;
+		enemy.push_back(skeleton);
 		return;
 	}
 
-	//2% шанса появления яблока
-	if (chance(20)) {
-		field[startSizeMap.x][randomTile] = 'a';
+	//40% шанса появления шипов
+	if (chance(400)) {
+		// 30% шанса появления вторых шипов (на той же линии)
+		if (chance(30)) {
+			field[startSizeMap.x][randomTile] = '^';
+			int randomTile = rand() % 3;
+			field[startSizeMap.x][randomTile] = '^';
+			return;
+		}
+		else
+			field[startSizeMap.x][randomTile] = '^';
 		return;
 	}
 
@@ -279,7 +279,7 @@ void Map::update(int move) {
 	//Взаимодействие с объектами
 	switch (field[hero.getCord().y][hero.getCord().x]) {
 		case 'm':
-			hero.addMoney(10);
+			hero.addMoney(random(7, 12));
 			field[hero.getCord().y][hero.getCord().x] = '#';
 
 			buffer.loadFromFile("sounds/coin.wav");
@@ -314,7 +314,7 @@ void Map::update(int move) {
 		case '?':
 			field[hero.getCord().y][hero.getCord().x] = '#';
 
-			switch (rand() % 2) {
+			switch (rand() % 3) {
 				case 0:
 					hero.heal(hero.getMaxHP());
 					buffer.loadFromFile("sounds/accept.wav");
@@ -332,6 +332,12 @@ void Map::update(int move) {
 						sound.setBuffer(buffer);
 						sound.play();
 					}
+					break;
+				case 2:
+					hero.addMoney(random(2, 20));
+					buffer.loadFromFile("sounds/coin.wav");
+					sound.setBuffer(buffer);
+					sound.play();
 					break;
 			}
 			break;
