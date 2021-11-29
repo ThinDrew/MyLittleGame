@@ -59,7 +59,9 @@ struct Map {
 	void update(int move);
 	void create();
 	void restart();
+	void heroMove(int move);
 	void mapMove();
+	void enemyBehavior();
 
 	//Вывод карты
 	void print();

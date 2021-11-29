@@ -208,6 +208,70 @@ void Map::mapMove() {
 	}
 }
 
+void Map::heroMove(int move) {
+	sf::Vector2i temp = hero.getCord();
+	switch (move) {
+	case DIR_LEFT:
+		temp.x--;
+		hero = -1;
+		if (temp.x < startSizeMap.y) {
+			temp.x = startSizeMap.y;
+			hero = 0;
+		}
+		break;
+	case DIR_RIGHT:
+		temp.x++;
+		hero = 1;
+		if (temp.x > endSizeMap.y - 1) {
+			temp.x = endSizeMap.y - 1;
+			hero = 0;
+		}
+		break;
+	case DIR_UP:
+		hero = 0;
+		break;
+	case DIR_DASH:
+		hero = 0;
+		mapMove();
+	}
+	hero.setCord(temp);
+}
+
+void Map::enemyBehavior() {
+	if (enemy.size() > 0) {
+		std::list <Enemy*>::iterator it = enemy.begin();
+		for (it; it != enemy.end(); it++) {
+			if ((*it)->getID() == ID_SKELETON or (*it)->getID() == ID_SPIKES) {
+				if ((*it)->getCord().x + (*it)->getDir() < 0 or (*it)->getCord().x + (*it)->getDir() > 2) {
+					(*it)->changeDir();
+				}
+				if ((*it)->getCord().x + 2 * (*it)->getDir() < 0 or (*it)->getCord().x + 2 * (*it)->getDir() > 2)
+					(*it)->changeSpriteDir();
+				(*it)->plusDir();
+			}
+
+			//если игрок на клетке с врагом
+			if ((*it)->getCord() == hero.getCord()) {
+				hero.hit((*it)->getDMG());
+
+				if (!hero.isAlive()) {
+					buffer.loadFromFile("sounds/death.wav");
+					sound.setBuffer(buffer);
+					sound.play();
+				}
+				else {
+					buffer.loadFromFile("sounds/hit.wav");
+					sound.setBuffer(buffer);
+					sound.play();
+				}
+			}
+		}
+		it = enemy.begin();
+		if ((*it)->getCord().y > endSizeMap.x - 1)
+			enemy.pop_front();
+	}
+}
+
 void Map::update(int move) {
 	// Движение карты
 	mapMove();
@@ -215,33 +279,7 @@ void Map::update(int move) {
 	generate();
 
 	//Движение игрока
-	sf::Vector2i temp = hero.getCord();
-	switch (move) {
-		case DIR_LEFT:
-			temp.x--;
-			hero = -1;
-			if (temp.x < startSizeMap.y) {
-				temp.x = startSizeMap.y;
-				hero = 0;
-			}
-			break;
-		case DIR_RIGHT:
-			temp.x++;
-			hero = 1;
-			if (temp.x > endSizeMap.y - 1) {
-				temp.x = endSizeMap.y - 1;
-				hero = 0;
-			}
-			break;
-		case DIR_UP:
-			hero = 0;
-			break;
-		case DIR_DASH:
-			hero = 0;
-			mapMove();
-	}
-
-	hero.setCord(temp);
+	heroMove(move);
 
 	//Взаимодействие с объектами
 	switch (field[hero.getCord().y][hero.getCord().x]) {
@@ -281,38 +319,7 @@ void Map::update(int move) {
 	}
 
 	//поведение врагов
-	if (enemy.size() > 0) {
-		std::list <Enemy*>::iterator it = enemy.begin();
-		for (it; it != enemy.end(); it++) {
-			if ((*it)->getID() == ID_SKELETON or (*it)->getID() == ID_SPIKES) {
-				if ((*it)->getCord().x + (*it)->getDir() < 0 or (*it)->getCord().x + (*it)->getDir() > 2) {
-					(*it)->changeDir();
-				}
-				if ((*it)->getCord().x + 2 * (*it)->getDir() < 0 or (*it)->getCord().x + 2 * (*it)->getDir() > 2)
-						(*it)->changeSpriteDir();
-				(*it)->plusDir();
-			}
-
-			//если игрок на клетке с врагом
-			if ((*it)->getCord() == hero.getCord()) {
-				hero.hit((*it)->getDMG());
-
-				if (!hero.isAlive()) {
-					buffer.loadFromFile("sounds/death.wav");
-					sound.setBuffer(buffer);
-					sound.play();
-				}
-				else {
-					buffer.loadFromFile("sounds/hit.wav");
-					sound.setBuffer(buffer);
-					sound.play();
-				}
-			}
-		}
-		it = enemy.begin();
-		if ((*it)->getCord().y > endSizeMap.x - 1)
-			enemy.pop_front();
-	}
+	enemyBehavior();
 	count_f = 1;
 	stepCount++;
 }
