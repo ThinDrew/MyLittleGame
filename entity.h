@@ -43,6 +43,9 @@ public:
 	int getID() {
 		return m_id;
 	}
+	int getMaxHP() {
+		return m_maxhp;
+	}
 
 	//set
 	void setCord(int xValue, int yValue) {

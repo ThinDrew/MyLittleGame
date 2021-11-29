@@ -18,6 +18,7 @@
 //^ - шипы
 //v - окрававленные шипы
 //m - монеты
+//? - рандомная коробочка
 short Map::count_f = 1;
 
 void Map::create() {
@@ -105,6 +106,11 @@ void Map::print() {
 					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(purple);
 					else color(l_red);
 					break;
+
+				case '?':
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(l_cyan);
+					else color(cyan);
+					break;
 			}
 
 			std::cout << field[i][j];
@@ -131,7 +137,7 @@ void Map::print() {
 		color(white);
 	}
 
-	std::cout << "Dash: " << hero.getDash() << "\n";
+	std::cout << "Dash info: " << hero.getDash() << "\n";
 }
 
 void Map::generate() {
@@ -192,6 +198,12 @@ void Map::generate() {
 	//2% шанса появления яблока
 	if (chance(2)) {
 		field[startSizeMap.x][randomTile] = 'a';
+		return;
+	}
+
+	//1% шанса появления рандомной коробочки
+	if (chance(0)) {
+		field[startSizeMap.x][randomTile] = '?';
 		return;
 	}
 
@@ -273,7 +285,6 @@ void Map::update(int move) {
 			buffer.loadFromFile("sounds/coin.wav");
 			sound.setBuffer(buffer);
 			sound.play();
-
 			break;
 
 		case '^':
@@ -289,7 +300,6 @@ void Map::update(int move) {
 				sound.setBuffer(buffer);
 				sound.play();
 			}
-
 			break;
 
 		case 'a':
@@ -299,6 +309,32 @@ void Map::update(int move) {
 			buffer.loadFromFile("sounds/eat.wav");
 			sound.setBuffer(buffer);
 			sound.play();
+			break;
+
+		case '?':
+			field[hero.getCord().y][hero.getCord().x] = '#';
+
+			switch (rand() % 2) {
+				case 0:
+					hero.heal(hero.getMaxHP());
+					buffer.loadFromFile("sounds/accept.wav");
+					sound.setBuffer(buffer);
+					sound.play();
+					break;
+				case 1:
+					hero.hit(3);
+					buffer.loadFromFile("sounds/decline.wav");
+					sound.setBuffer(buffer);
+					sound.play();
+					if (!hero.isAlive()) {
+						music.stop();
+						buffer.loadFromFile("sounds/death.wav");
+						sound.setBuffer(buffer);
+						sound.play();
+					}
+					break;
+			}
+			break;
 	}
 
 	//поведение врагов
@@ -378,6 +414,9 @@ void Map::show(sf::RenderWindow& window) {
 
 				case '_':
 					obj.setTextureRect(sf::IntRect(8 * spriteSize, 0, spriteSize, spriteSize));
+					break;
+				case '?':
+					obj.setTextureRect(sf::IntRect(9 * spriteSize, 0, spriteSize, spriteSize));
 					break;
 			}
 
