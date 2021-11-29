@@ -1,8 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 
 #include "entity.h"
+ 
 #include "map.h"
 #include "help.h"
 
@@ -16,6 +18,7 @@
 //^ - шипы
 //v - окрававленные шипы
 //m - монеты
+//? - рандомная коробочка
 short Map::count_f = 1;
 
 void Map::create() {
@@ -33,7 +36,7 @@ void Map::create() {
 					break;
 
 				case 2:
-					if (chance(20))
+					if (chance(10))
 						field[i][j] = 'O';
 
 					else
@@ -59,6 +62,8 @@ void Map::restart() {
 }
 
 void Map::print() {
+	system("CLS");
+
 	for (int i = startSizeMap.x; i < endSizeMap.x; i++) {
 		for (int j = startSizeMap.y; j < endSizeMap.y; j++) {
 			switch (field[i][j]) {
@@ -101,6 +106,11 @@ void Map::print() {
 					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(purple);
 					else color(l_red);
 					break;
+
+				case '?':
+					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(l_cyan);
+					else color(cyan);
+					break;
 			}
 
 			std::cout << field[i][j];
@@ -126,6 +136,8 @@ void Map::print() {
 		std::cout << "-----------\n\n";
 		color(white);
 	}
+
+	std::cout << "Dash info: " << hero.getDash() << "\n";
 }
 
 void Map::generate() {
@@ -141,13 +153,42 @@ void Map::generate() {
 			field[startSizeMap.x][randomTile] = 'o';
 			break;
 		}
-		if (chance(1))
+		if (chance(10))
 			field[startSizeMap.x][randomTile] = 'O';
 		break;
 	}
-	
+
+	//2% шанса появления яблока
+	if (chance(20)) {
+		field[startSizeMap.x][randomTile] = 'a';
+		return;
+	}
+
+	//5% шанса появления монет
+	if (chance(50)) {
+		field[startSizeMap.x][randomTile] = 'm';
+		return;
+	}
+
+	//7% шанса появления вылезающих шипов
+	if (chance(70)) {
+		field[startSizeMap.x][0] = '_';
+		field[startSizeMap.x][1] = '_';
+		field[startSizeMap.x][2] = '_';
+		MovingSpikes* spikes = new MovingSpikes;
+		enemy.push_back(spikes);
+		return;
+	}
+
+	//10% шанса появления скелета
+	if (chance(100)) {
+		Skeleton* skeleton = new Skeleton;
+		enemy.push_back(skeleton);
+		return;
+	}
+
 	//40% шанса появления шипов
-	if (chance(40)) {
+	if (chance(400)) {
 		// 30% шанса появления вторых шипов (на той же линии)
 		if (chance(30)) {
 			field[startSizeMap.x][randomTile] = '^';
@@ -160,32 +201,9 @@ void Map::generate() {
 		return;
 	}
 
-	//10% шанса появления скелета
+	//1% шанса появления рандомной коробочки
 	if (chance(10)) {
-		Skeleton* skeleton = new Skeleton;
-		enemy.push_back(skeleton);
-		return;
-	}
-
-	//7% шанса появления вылезающих шипов
-	if (chance(7)) {
-		field[startSizeMap.x][0] = '_';
-		field[startSizeMap.x][1] = '_';
-		field[startSizeMap.x][2] = '_';
-		MovingSpikes* spikes = new MovingSpikes;
-		enemy.push_back(spikes);
-		return;
-	}
-
-	//5% шанса появления монет
-	if (chance(5)) {
-		field[startSizeMap.x][randomTile] = 'm';
-		return;
-	}
-
-	//2% шанса появления яблока
-	if (chance(2)) {
-		field[startSizeMap.x][randomTile] = 'a';
+		field[startSizeMap.x][randomTile] = '?';
 		return;
 	}
 
@@ -208,31 +226,53 @@ void Map::mapMove() {
 	}
 }
 
+void Map::shiftEnemies(int value) {
+	if (enemy.size() > 0) {
+		std::list <Enemy*>::iterator it = enemy.begin();
+		for (it; it != enemy.end(); it++) {
+			(*it)->setDirY(value);
+		}
+	}
+}
+
+void Map::update(int move) {
+	// Движение карты
+	mapMove();
+
+	generate();
+
+	shiftEnemies(1);
+
+	//Движение игрока
 void Map::heroMove(int move) {
 	sf::Vector2i temp = hero.getCord();
 	switch (move) {
-	case DIR_LEFT:
-		temp.x--;
-		hero = -1;
-		if (temp.x < startSizeMap.y) {
-			temp.x = startSizeMap.y;
+		case DIR_LEFT:
+			temp.x--;
+			hero = -1;
+			if (temp.x < startSizeMap.y) {
+				temp.x = startSizeMap.y;
+				hero = 0;
+			}
+			break;
+		case DIR_RIGHT:
+			temp.x++;
+			hero = 1;
+			if (temp.x > endSizeMap.y - 1) {
+				temp.x = endSizeMap.y - 1;
+				hero = 0;
+			}
+			break;
+
+		case DIR_UP:
 			hero = 0;
-		}
-		break;
-	case DIR_RIGHT:
-		temp.x++;
-		hero = 1;
-		if (temp.x > endSizeMap.y - 1) {
-			temp.x = endSizeMap.y - 1;
+			break;
+
+		case DIR_DASH:
 			hero = 0;
-		}
-		break;
-	case DIR_UP:
-		hero = 0;
-		break;
-	case DIR_DASH:
-		hero = 0;
-		mapMove();
+			mapMove();
+			hero.dashHero();
+			shiftEnemies(2);
 	}
 	hero.setCord(temp);
 }
@@ -284,13 +324,12 @@ void Map::update(int move) {
 	//Взаимодействие с объектами
 	switch (field[hero.getCord().y][hero.getCord().x]) {
 		case 'm':
-			hero.addMoney(10);
+			hero.addMoney(random(7, 12));
 			field[hero.getCord().y][hero.getCord().x] = '#';
 
 			buffer.loadFromFile("sounds/coin.wav");
 			sound.setBuffer(buffer);
 			sound.play();
-
 			break;
 
 		case '^':
@@ -306,7 +345,6 @@ void Map::update(int move) {
 				sound.setBuffer(buffer);
 				sound.play();
 			}
-
 			break;
 
 		case 'a':
@@ -316,6 +354,38 @@ void Map::update(int move) {
 			buffer.loadFromFile("sounds/eat.wav");
 			sound.setBuffer(buffer);
 			sound.play();
+			break;
+
+		case '?':
+			field[hero.getCord().y][hero.getCord().x] = '#';
+
+			switch (rand() % 3) {
+				case 0:
+					hero.heal(hero.getMaxHP());
+					buffer.loadFromFile("sounds/accept.wav");
+					sound.setBuffer(buffer);
+					sound.play();
+					break;
+				case 1:
+					hero.hit(3);
+					buffer.loadFromFile("sounds/decline.wav");
+					sound.setBuffer(buffer);
+					sound.play();
+					if (!hero.isAlive()) {
+						music.stop();
+						buffer.loadFromFile("sounds/death.wav");
+						sound.setBuffer(buffer);
+						sound.play();
+					}
+					break;
+				case 2:
+					hero.addMoney(random(2, 20));
+					buffer.loadFromFile("sounds/coin.wav");
+					sound.setBuffer(buffer);
+					sound.play();
+					break;
+			}
+			break;
 	}
 
 	//поведение врагов
@@ -364,6 +434,9 @@ void Map::show(sf::RenderWindow& window) {
 				case '_':
 					obj.setTextureRect(sf::IntRect(8 * spriteSize, 0, spriteSize, spriteSize));
 					break;
+				case '?':
+					obj.setTextureRect(sf::IntRect(9 * spriteSize, 0, spriteSize, spriteSize));
+					break;
 			}
 
 			obj.setScale(scale, scale);
@@ -379,8 +452,8 @@ void Map::show(sf::RenderWindow& window) {
 		for (std::list <Enemy*>::iterator it = enemy.begin(); it != enemy.end(); it++) {
 				(*it)->obj.setScale(scale, scale);
 				(*it)->obj.setTexture(texture);
-				sf::Vector2f start_place(((*it)->getCord().x - (*it)->getDir()) * spriteSize * scale, ((*it)->getCord().y-2) * spriteSize * scale);
-				sf::Vector2f offset(((*it)->getDir())* spriteSize * scale / 60.0 * count_f, spriteSize * scale / 60.0 * count_f);
+				sf::Vector2f start_place(((*it)->getCord().x - (*it)->getDir().x) * spriteSize * scale, ((*it)->getCord().y-2) * spriteSize * scale);
+				sf::Vector2f offset(((*it)->getDir().x)* spriteSize * scale / 60.0 * count_f, spriteSize * scale / 60.0 * count_f);
 	
 				(*it)->obj.setPosition(start_place + offset);
 				window.draw((*it)->obj);
@@ -393,6 +466,7 @@ void Map::show(sf::RenderWindow& window) {
 
 	hero.obj.setScale(scale, scale);
 	hero.obj.setTexture(texture);
+	
 	sf::Vector2f start_place((hero.getCord().x - hero.getDir())* spriteSize * scale, (hero.getCord().y-1) * spriteSize * scale);
 	sf::Vector2f offset((hero.getDir() * spriteSize * scale) / 60.0 * count_f, 0);
 	hero.obj.setPosition(start_place + offset);

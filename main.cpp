@@ -9,32 +9,33 @@ int main() {
 
     int scale = 5; //во сколько раз увеличиваются пиксели
 
+    bool windowInFocus;
+    bool isPaused = false;
+
     sf::Clock clock;
     Map map(scale);
     map.print();
-
+   
     sf::RenderWindow window(sf::VideoMode(300, 600), "CURS");
     
-    while (window.isOpen())
-    {
+    while (window.isOpen()) {
+        windowInFocus = window.hasFocus();
         float time = clock.getElapsedTime().asMicroseconds();
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-            
-            if (event.type == sf::Event::KeyPressed and map.hero.isAlive() and map.count_f == 61) {
-                if (event.key.code == sf::Keyboard::Left) {
+            if (event.type == sf::Event::KeyPressed and map.hero.isAlive() and map.count_f == 61 and windowInFocus and !isPaused) {
+                if (event.key.code == sf::Keyboard::Left or event.key.code == sf::Keyboard::A) {
                     map.update(DIR_LEFT);
                 }
-                if (event.key.code == sf::Keyboard::Up) {
+                if (event.key.code == sf::Keyboard::Up or event.key.code == sf::Keyboard::W) {
                     map.update(DIR_UP);
                 }
-                if (event.key.code == sf::Keyboard::Right) {
+                if (event.key.code == sf::Keyboard::Right or event.key.code == sf::Keyboard::D) {
                     map.update(DIR_RIGHT);
                 }
-                if (event.key.code == sf::Keyboard::Space) {
+                if (event.key.code == sf::Keyboard::RControl) {
                     map.update(DIR_DASH);
                 }
                 map.print();
@@ -54,6 +55,12 @@ int main() {
 
                     map.print();
                 }
+                if (event.key.code == sf::Keyboard::P or event.key.code == sf::Keyboard::Space) {
+                    isPaused = 1 - isPaused;
+                    if (isPaused)
+                        map.music.pause();
+                    else map.music.play();
+                }
             }
         }
 
@@ -68,7 +75,7 @@ int main() {
             map.count_f++;
             clock.restart();
         }
-        if (map.count_f == 61 and time > 500000 and map.hero.isAlive()) {
+        if (map.count_f == 61 and time > 500000 and map.hero.isAlive() and windowInFocus and !isPaused) {
             map.update(DIR_UP);
             map.print();
             map.count_f = 1;

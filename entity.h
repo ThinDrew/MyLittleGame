@@ -43,6 +43,9 @@ public:
 	int getID() {
 		return m_id;
 	}
+	int getMaxHP() {
+		return m_maxhp;
+	}
 
 	//set
 	void setCord(int xValue, int yValue) {
@@ -67,10 +70,11 @@ public:
 class Player : public Entity{
 private:
 	int money;
+	bool dash;
 public:
 	Player() {}
 
-	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3, 10, 1) , money(0) {
+	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3, 10, 1) , money(0), dash(false) {
 		obj.setTextureRect(sf::IntRect(0, spriteSize, spriteSize, spriteSize));
 		m_id = ID_PLAYER;
 	}
@@ -78,6 +82,14 @@ public:
 	//get
 	int getMoney() {
 		return money;
+	}
+
+	void dashHero() {
+		dash =  (dash == false) ? true : false;
+	}
+		
+	bool getDash() {
+		return dash;
 	}
 	
 	void operator =(int value) {
@@ -132,14 +144,24 @@ public:
 	}
 
 	//get
-	int getDir() {
-		return m_dir.x;
+	sf::Vector2i getDir() {
+		return m_dir;
+	}
+
+	//set
+	void setDirY(int value) {
+		m_dir.y = value;
 	}
 
 	//plus or minus
 	void plusDir() {
 		m_cord += m_dir;
 	}
+
+	void plusCord(sf::Vector2i& a) {
+		m_cord += a;
+	}
+
 	void minusCord() {
 		m_cord -= m_dir;
 	}
@@ -155,17 +177,17 @@ public:
 class MovingSpikes : public Enemy {
 public:
 	MovingSpikes() : Enemy(2, 0, ID_SPIKES) {
-		if (getDir() < 0)
-			obj.setTextureRect(sf::IntRect(9 * spriteSize, 0, spriteSize, spriteSize));
+		if (getDir().x < 0)
+			obj.setTextureRect(sf::IntRect(0, 3 * spriteSize, spriteSize, spriteSize));
 		else
-			obj.setTextureRect(sf::IntRect(10 * spriteSize, 0, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(spriteSize, 3 * spriteSize, spriteSize, spriteSize));
 	}
 
 	virtual void changeSpriteDir() {
-		if (getDir() > 0)
-			obj.setTextureRect(sf::IntRect(9 * spriteSize, 0, spriteSize, spriteSize));
+		if (getDir().x > 0)
+			obj.setTextureRect(sf::IntRect(0, 3 * spriteSize, spriteSize, spriteSize));
 		else
-			obj.setTextureRect(sf::IntRect(10 * spriteSize, 0, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(spriteSize, 3 * spriteSize, spriteSize, spriteSize));
 	}
 };
 
@@ -173,7 +195,7 @@ class Skeleton : public Enemy {
 public:
 	/////////////////dmg/hp//
 	Skeleton() :Enemy(1, 10, ID_SKELETON){
-		if (getDir() < 0)
+		if (getDir().x < 0)
 			obj.setTextureRect(sf::IntRect(5 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
 		else
 			obj.setTextureRect(sf::IntRect(6 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
@@ -184,7 +206,7 @@ public:
 
 	//other
 	virtual void changeSpriteDir() {
-		if (getDir() > 0)
+		if (getDir().x > 0)
 			obj.setTextureRect(sf::IntRect(5 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
 		else
 			obj.setTextureRect(sf::IntRect(6 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));

@@ -54,17 +54,20 @@ struct Map {
 		create();
 	}
 
-	//генерация и обновление карты
-	void generate();
-	void update(int move);
+	//создание и пересоздание	
 	void create();
 	void restart();
+	
+	//обновление карты
+	void update(int move);
 	void heroMove(int move);
 	void mapMove();
+	void generate();
+	void shiftEnemies(int value);
+	
 	void enemyBehavior();
 
 	//Вывод карты
 	void print();
-
 	void show(sf::RenderWindow& window);
 };
