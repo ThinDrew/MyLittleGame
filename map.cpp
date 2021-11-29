@@ -36,7 +36,7 @@ void Map::create() {
 					break;
 
 				case 2:
-					if (chance(20))
+					if (chance(10))
 						field[i][j] = 'O';
 
 					else
@@ -153,13 +153,13 @@ void Map::generate() {
 			field[startSizeMap.x][randomTile] = 'o';
 			break;
 		}
-		if (chance(1))
+		if (chance(10))
 			field[startSizeMap.x][randomTile] = 'O';
 		break;
 	}
 	
 	//40% шанса появления шипов
-	if (chance(40)) {
+	if (chance(400)) {
 		// 30% шанса появления вторых шипов (на той же линии)
 		if (chance(30)) {
 			field[startSizeMap.x][randomTile] = '^';
@@ -173,14 +173,14 @@ void Map::generate() {
 	}
 
 	//10% шанса появления скелета
-	if (chance(10)) {
+	if (chance(100)) {
 		Skeleton* skeleton = new Skeleton;
 		enemy.push_back(skeleton);
 		return;
 	}
 
 	//7% шанса появления вылезающих шипов
-	if (chance(7)) {
+	if (chance(70)) {
 		field[startSizeMap.x][0] = '_';
 		field[startSizeMap.x][1] = '_';
 		field[startSizeMap.x][2] = '_';
@@ -190,19 +190,19 @@ void Map::generate() {
 	}
 
 	//5% шанса появления монет
-	if (chance(5)) {
+	if (chance(50)) {
 		field[startSizeMap.x][randomTile] = 'm';
 		return;
 	}
 
 	//2% шанса появления яблока
-	if (chance(2)) {
+	if (chance(20)) {
 		field[startSizeMap.x][randomTile] = 'a';
 		return;
 	}
 
 	//1% шанса появления рандомной коробочки
-	if (chance(0)) {
+	if (chance(10)) {
 		field[startSizeMap.x][randomTile] = '?';
 		return;
 	}
