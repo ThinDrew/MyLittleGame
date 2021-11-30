@@ -102,7 +102,7 @@ void Map::print() {
 					else color(l_green);
 					break;
 
-				case '_':
+				case '-':
 					if (i == startSizeMap.x or i == endSizeMap.x - 1) color(purple);
 					else color(l_red);
 					break;
@@ -172,10 +172,10 @@ void Map::generate() {
 
 	//7% шанса появления вылезающих шипов
 	if (chance(70)) {
-		field[startSizeMap.x][0] = '_';
-		field[startSizeMap.x][1] = '_';
-		field[startSizeMap.x][2] = '_';
-		MovingSpikes* spikes = new MovingSpikes;
+		field[startSizeMap.x][0] = '-';
+		field[startSizeMap.x][1] = '-';
+		field[startSizeMap.x][2] = '-';
+		MovingSaw* spikes = new MovingSaw;
 		enemy.push_back(spikes);
 		return;
 	}
@@ -235,13 +235,14 @@ void Map::shiftEnemies(int value) {
 	}
 }
 
-void Map::update(int move) {
-	// Движение карты
-	mapMove();
-
-	generate();
-
-	shiftEnemies(1);
+//void Map::update(int move) {
+//	// Движение карты
+//	mapMove();
+//
+//	generate();
+//
+//	shiftEnemies(1);
+//}
 
 	//Движение игрока
 void Map::heroMove(int move) {
@@ -281,11 +282,11 @@ void Map::enemyBehavior() {
 	if (enemy.size() > 0) {
 		std::list <Enemy*>::iterator it = enemy.begin();
 		for (it; it != enemy.end(); it++) {
-			if ((*it)->getID() == ID_SKELETON or (*it)->getID() == ID_SPIKES) {
-				if ((*it)->getCord().x + (*it)->getDir() < 0 or (*it)->getCord().x + (*it)->getDir() > 2) {
+			if ((*it)->getID() == ID_SKELETON or (*it)->getID() == ID_SAW) {
+				if ((*it)->getCord().x + (*it)->getDir().x < 0 or (*it)->getCord().x + (*it)->getDir().x > 2) {
 					(*it)->changeDir();
 				}
-				if ((*it)->getCord().x + 2 * (*it)->getDir() < 0 or (*it)->getCord().x + 2 * (*it)->getDir() > 2)
+				if ((*it)->getCord().x + 2 * (*it)->getDir().x < 0 or (*it)->getCord().x + 2 * (*it)->getDir().x > 2)
 					(*it)->changeSpriteDir();
 				(*it)->plusDir();
 			}
@@ -431,7 +432,7 @@ void Map::show(sf::RenderWindow& window) {
 					obj.setTextureRect(sf::IntRect(7 * spriteSize, 0, spriteSize, spriteSize));
 					break;
 
-				case '_':
+				case '-':
 					obj.setTextureRect(sf::IntRect(8 * spriteSize, 0, spriteSize, spriteSize));
 					break;
 				case '?':

@@ -7,7 +7,7 @@ enum Enemies
 	ID_PLAYER,
 	ID_SKELETON,
 	ID_GOBLIN,
-	ID_SPIKES
+	ID_SAW
 };
 
 class Entity {
@@ -116,7 +116,7 @@ public:
 	//other
 	void die() {
 		if (m_hp <= 0) {
-			obj.setTextureRect(sf::IntRect(4 * spriteSize, spriteSize, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(spriteSize, spriteSize, spriteSize, spriteSize));
 			m_hp = 0;
 		}
 	}
@@ -174,9 +174,9 @@ public:
 	virtual void changeSpriteDir() {}
 };
 
-class MovingSpikes : public Enemy {
+class MovingSaw : public Enemy {
 public:
-	MovingSpikes() : Enemy(2, 0, ID_SPIKES) {
+	MovingSaw() : Enemy(2, 0, ID_SAW) {
 		if (getDir().x < 0)
 			obj.setTextureRect(sf::IntRect(0, 3 * spriteSize, spriteSize, spriteSize));
 		else
@@ -196,9 +196,9 @@ public:
 	/////////////////dmg/hp//
 	Skeleton() :Enemy(1, 10, ID_SKELETON){
 		if (getDir().x < 0)
-			obj.setTextureRect(sf::IntRect(5 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(0, 2 * spriteSize, spriteSize, spriteSize));
 		else
-			obj.setTextureRect(sf::IntRect(6 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(spriteSize, 2 * spriteSize, spriteSize, spriteSize));
 	}
 	Skeleton(const Skeleton &another): Enemy(another.m_dmg, another.m_hp, ID_SKELETON) {
 		
@@ -207,8 +207,8 @@ public:
 	//other
 	virtual void changeSpriteDir() {
 		if (getDir().x > 0)
-			obj.setTextureRect(sf::IntRect(5 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(0, 2 * spriteSize, spriteSize, spriteSize));
 		else
-			obj.setTextureRect(sf::IntRect(6 * spriteSize, 2 * spriteSize, spriteSize, spriteSize));
+			obj.setTextureRect(sf::IntRect(spriteSize, 2 * spriteSize, spriteSize, spriteSize));
 	}
 };
