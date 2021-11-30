@@ -296,6 +296,7 @@ void Map::enemyBehavior() {
 				hero.hit((*it)->getDMG());
 
 				if (!hero.isAlive()) {
+					music.stop();
 					buffer.loadFromFile("sounds/death.wav");
 					sound.setBuffer(buffer);
 					sound.play();
