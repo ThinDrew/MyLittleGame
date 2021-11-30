@@ -120,14 +120,14 @@ void Map::print() {
 	}
 	color(l_red);
 	std::cout << "HP: " << hero.getHP();
-	color(white);
-	std::cout << "\nDamage: " << hero.getDMG();
 	color(yellow);
 	std::cout << "\nCoins: " << hero.getMoney() << '\n';
 	color(white);
 
 	std::cout << "Number of enemies: ";
 	std::cout << enemy.size() << '\n';
+
+	std::cout << "Steps: " << stepCount << '\n';
 	
 	if (!hero.isAlive()) {
 		color(red);
@@ -170,13 +170,13 @@ void Map::generate() {
 		return;
 	}
 
-	//7% шанса появления вылезающих шипов
+	//7% шанса появления пилы
 	if (chance(70)) {
 		field[startSizeMap.x][0] = '-';
 		field[startSizeMap.x][1] = '-';
 		field[startSizeMap.x][2] = '-';
-		MovingSaw* spikes = new MovingSaw;
-		enemy.push_back(spikes);
+		MovingSaw* saw = new MovingSaw;
+		enemy.push_back(saw);
 		return;
 	}
 
@@ -326,7 +326,7 @@ void Map::update(int move) {
 	//Взаимодействие с объектами
 	switch (field[hero.getCord().y][hero.getCord().x]) {
 		case 'm':
-			hero.addMoney(random(7, 12));
+			hero.addMoney(random(1, 3));
 			field[hero.getCord().y][hero.getCord().x] = '#';
 
 			buffer.loadFromFile("sounds/coin.wav");
@@ -350,7 +350,7 @@ void Map::update(int move) {
 			break;
 
 		case 'a':
-			hero.heal(2);
+			hero.heal(1);
 			field[hero.getCord().y][hero.getCord().x] = '#';
 
 			buffer.loadFromFile("sounds/eat.wav");
@@ -369,7 +369,7 @@ void Map::update(int move) {
 					sound.play();
 					break;
 				case 1:
-					hero.hit(3);
+					hero.hit(1);
 					buffer.loadFromFile("sounds/decline.wav");
 					sound.setBuffer(buffer);
 					sound.play();
@@ -381,7 +381,7 @@ void Map::update(int move) {
 					}
 					break;
 				case 2:
-					hero.addMoney(random(2, 20));
+					hero.addMoney(random(2, 5));
 					buffer.loadFromFile("sounds/coin.wav");
 					sound.setBuffer(buffer);
 					sound.play();

@@ -13,9 +13,6 @@ enum Enemies
 class Entity {
 protected:
 	int m_id;
-	int m_hp;
-	int m_maxhp;
-	int m_dmg;
 	sf::Vector2i m_dir;
 	int spriteSize = 20;
 
@@ -26,25 +23,16 @@ public:
 
 	Entity() {}
 
-	Entity(int x, int y, int hp, int dmg) : m_cord(x, y), m_hp(hp), m_maxhp(hp), m_dmg(dmg) {}
+	Entity(int x, int y) : m_cord(x, y) {}
 
-	Entity(sf::Vector2i cord, int hp, int dmg) : m_cord(cord), m_hp(hp), m_dmg(dmg) {}
+	Entity(sf::Vector2i cord, int hp, int dmg) : m_cord(cord) {}
 
 	//get
-	int getHP() {
-		return m_hp;
-	}
-	int getDMG() {
-		return m_dmg;
-	}
 	sf::Vector2i getCord() {
 		return m_cord;
 	}
 	int getID() {
 		return m_id;
-	}
-	int getMaxHP() {
-		return m_maxhp;
 	}
 
 	//set
@@ -52,16 +40,9 @@ public:
 		m_cord.x = xValue;
 		m_cord.y = yValue;
 	}
-
 	void setCord(sf::Vector2i value) {
 		m_cord = value;
 	}
-
-	//plus or minus
-	void hit(int value) {
-		m_hp -= value;
-	}
-
 
 	////other
 	//virtual void die() = 0;
@@ -69,12 +50,14 @@ public:
 
 class Player : public Entity{
 private:
+	int m_hp;
+	int m_maxhp;
 	int money;
 	bool dash;
 public:
 	Player() {}
 
-	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3, 10, 1) , money(0), dash(false) {
+	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3), money(0), dash(false), m_maxhp(5), m_hp(5) {
 		obj.setTextureRect(sf::IntRect(0, spriteSize, spriteSize, spriteSize));
 		m_id = ID_PLAYER;
 	}
@@ -83,25 +66,20 @@ public:
 	int getMoney() {
 		return money;
 	}
-
+	int getHP() {
+		return m_hp;
+	}
+	int getMaxHP() {
+		return m_maxhp;
+	}
 	void dashHero() {
 		dash =  (dash == false) ? true : false;
-	}
-		
+	}		
 	bool getDash() {
 		return dash;
-	}
-	
-	void operator =(int value) {
-		m_dir.x = value;
-	}
-
+	}	
 	int getDir() {
 		return m_dir.x;
-	}
-
-	bool isAlive() {
-		return m_hp > 0;
 	}
 
 	//plus or minus
@@ -112,6 +90,9 @@ public:
 		m_hp += value;
 		if (m_hp > m_maxhp) m_hp = m_maxhp;
 	}
+	void hit(int value) {
+		m_hp -= value;
+	}
 
 	//other
 	void die() {
@@ -120,6 +101,12 @@ public:
 			m_hp = 0;
 		}
 	}
+	void operator =(int value) {
+		m_dir.x = value;
+	}
+	bool isAlive() {
+		return m_hp > 0;
+	}
 
 	//void operator +=(int value) {
 	//	money += value;
@@ -127,8 +114,10 @@ public:
 };
 
 class Enemy : public Entity {
+private:
+	int m_dmg;
 public:
-	Enemy (int damage, int health, int id): Entity(rand()% 3, -1, health, damage){
+	Enemy (int damage, int id): Entity(rand()% 3, -1), m_dmg(damage){
 		m_id = id;
 		int dir;
 		switch (rand() % 2) {
@@ -146,6 +135,9 @@ public:
 	//get
 	sf::Vector2i getDir() {
 		return m_dir;
+	}
+	int getDMG() {
+		return m_dmg;
 	}
 
 	//set
@@ -176,7 +168,7 @@ public:
 
 class MovingSaw : public Enemy {
 public:
-	MovingSaw() : Enemy(2, 0, ID_SAW) {
+	MovingSaw() : Enemy(1, ID_SAW) {
 		if (getDir().x < 0)
 			obj.setTextureRect(sf::IntRect(0, 3 * spriteSize, spriteSize, spriteSize));
 		else
@@ -194,14 +186,11 @@ public:
 class Skeleton : public Enemy {
 public:
 	/////////////////dmg/hp//
-	Skeleton() :Enemy(1, 10, ID_SKELETON){
+	Skeleton() :Enemy(1, ID_SKELETON){
 		if (getDir().x < 0)
 			obj.setTextureRect(sf::IntRect(0, 2 * spriteSize, spriteSize, spriteSize));
 		else
 			obj.setTextureRect(sf::IntRect(spriteSize, 2 * spriteSize, spriteSize, spriteSize));
-	}
-	Skeleton(const Skeleton &another): Enemy(another.m_dmg, another.m_hp, ID_SKELETON) {
-		
 	}
 
 	//other

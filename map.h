@@ -36,6 +36,7 @@ struct Map {
 	int spriteSize = 20;
 	int scale;
 	Player hero;
+	Interface myInterface;
 
 	std::list <Enemy*> enemy;
 
@@ -49,6 +50,7 @@ struct Map {
 		count_f = 1;
 		stepCount = 0;
 		hero = Player(endSizeMap.y, endSizeMap.x);
+		myInterface = Interface(scale);
 		texture.loadFromFile("sprites/tileset.png");
 
 		create();
@@ -70,4 +72,8 @@ struct Map {
 	//Вывод карты
 	void print();
 	void show(sf::RenderWindow& window);
+
+	Player getHero() {
+		return hero;
+	}
 };

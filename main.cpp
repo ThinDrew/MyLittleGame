@@ -16,7 +16,7 @@ int main() {
     Map map(scale);
     map.print();
    
-    sf::RenderWindow window(sf::VideoMode(300, 600), "CURS");
+    sf::RenderWindow window(sf::VideoMode(300, 600), "Dungeon Shifter");
     
     while (window.isOpen()) {
         windowInFocus = window.hasFocus();
@@ -70,6 +70,7 @@ int main() {
             window.clear();
 
             map.show(window);
+            map.myInterface.drawInterface(window, map.getHero());
             
             window.display();
             map.count_f++;
