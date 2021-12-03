@@ -1,5 +1,5 @@
 #pragma once
-
+#include <SFML/Graphics.hpp>
 #include <cstdlib>
 
 enum Enemies
@@ -12,7 +12,6 @@ enum Enemies
 
 class Entity {
 protected:
-	int m_id;
 	sf::Vector2i m_dir;
 	int spriteSize = 20;
 
@@ -31,9 +30,6 @@ public:
 	sf::Vector2i getCord() {
 		return m_cord;
 	}
-	int getID() {
-		return m_id;
-	}
 
 	//set
 	void setCord(int xValue, int yValue) {
@@ -43,6 +39,8 @@ public:
 	void setCord(sf::Vector2i value) {
 		m_cord = value;
 	}
+
+	virtual int getID() = 0;
 
 	////other
 	//virtual void die() = 0;
@@ -54,12 +52,13 @@ private:
 	int m_maxhp;
 	int money;
 	bool dash;
+	static int idPlayer;
 public:
 	Player() {}
 
 	Player(int valueX, int valueY) :Entity(valueX/2, valueY - 3), money(0), dash(false), m_maxhp(5), m_hp(5) {
 		obj.setTextureRect(sf::IntRect(0, spriteSize, spriteSize, spriteSize));
-		m_id = ID_PLAYER;
+		idPlayer = ID_PLAYER;
 	}
 
 	//get
@@ -108,6 +107,10 @@ public:
 		return m_hp > 0;
 	}
 
+	virtual int getID() {
+		return idPlayer;
+	}
+
 	//void operator +=(int value) {
 	//	money += value;
 	//}
@@ -117,8 +120,7 @@ class Enemy : public Entity {
 private:
 	int m_dmg;
 public:
-	Enemy (int damage, int id): Entity(rand()% 3, -1), m_dmg(damage){
-		m_id = id;
+	Enemy (int damage): Entity(rand()% 3, -1), m_dmg(damage){
 		int dir;
 		switch (rand() % 2) {
 			case 0:
@@ -163,12 +165,20 @@ public:
 		m_dir.x *= -1;
 	}
 
+	virtual int getID() {
+		throw "EXCEPTION WAS THROWN: ruterned ID from parent class ";
+	}
+
 	virtual void changeSpriteDir() {}
 };
 
+
+
 class MovingSaw : public Enemy {
+private:
+	static int idSaw;
 public:
-	MovingSaw() : Enemy(1, ID_SAW) {
+	MovingSaw() : Enemy(1) {
 		if (getDir().x < 0)
 			obj.setTextureRect(sf::IntRect(0, 3 * spriteSize, spriteSize, spriteSize));
 		else
@@ -181,12 +191,19 @@ public:
 		else
 			obj.setTextureRect(sf::IntRect(spriteSize, 3 * spriteSize, spriteSize, spriteSize));
 	}
+	virtual int getID() {
+		return idSaw;
+	}
+
 };
 
+
 class Skeleton : public Enemy {
+private:
+	static int idSkeleton;
 public:
-	/////////////////dmg/hp//
-	Skeleton() :Enemy(1, ID_SKELETON){
+	/////////////////dmg/hp/m_id//
+	Skeleton() :Enemy(1){
 		if (getDir().x < 0)
 			obj.setTextureRect(sf::IntRect(0, 2 * spriteSize, spriteSize, spriteSize));
 		else
@@ -200,4 +217,9 @@ public:
 		else
 			obj.setTextureRect(sf::IntRect(spriteSize, 2 * spriteSize, spriteSize, spriteSize));
 	}
+	
+	virtual int getID() {
+		return idSkeleton;
+	}
 };
+

@@ -26,19 +26,24 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::KeyPressed and map.hero.isAlive() and map.count_f == 61 and windowInFocus and !isPaused) {
-                if (event.key.code == sf::Keyboard::Left or event.key.code == sf::Keyboard::A) {
-                    map.update(DIR_LEFT);
+                try {
+                    if (event.key.code == sf::Keyboard::Left or event.key.code == sf::Keyboard::A) {
+                        map.update(DIR_LEFT);
+                    }
+                    if (event.key.code == sf::Keyboard::Up or event.key.code == sf::Keyboard::W) {
+                        map.update(DIR_UP);
+                    }
+                    if (event.key.code == sf::Keyboard::Right or event.key.code == sf::Keyboard::D) {
+                        map.update(DIR_RIGHT);
+                    }
+                    if (event.key.code == sf::Keyboard::RControl) {
+                        map.update(DIR_DASH);
+                    }
+                    map.print();
                 }
-                if (event.key.code == sf::Keyboard::Up or event.key.code == sf::Keyboard::W) {
-                    map.update(DIR_UP);
+                catch (const char* arr) {
+                    std::cout << arr;
                 }
-                if (event.key.code == sf::Keyboard::Right or event.key.code == sf::Keyboard::D) {
-                    map.update(DIR_RIGHT);
-                }
-                if (event.key.code == sf::Keyboard::RControl) {
-                    map.update(DIR_DASH);
-                }
-                map.print();
             }
 
             if (event.type == sf::Event::KeyPressed) {
