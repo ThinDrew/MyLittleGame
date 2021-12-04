@@ -190,7 +190,7 @@ void Map::generate() {
 	//40% шанса появления шипов
 	if (chance(400)) {
 		// 30% шанса появления вторых шипов (на той же линии)
-		if (chance(30)) {
+		if (chance(300)) {
 			field[startSizeMap.x][randomTile] = '^';
 			int randomTile = rand() % 3;
 			field[startSizeMap.x][randomTile] = '^';
